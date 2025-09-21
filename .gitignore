@@ -2,6 +2,5 @@ openimages_data/
 openimages_csv/
 data/raw/
 *.jpg
-*.png
 *.zip
 src/__pycache__/
