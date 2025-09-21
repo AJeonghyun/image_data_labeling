@@ -36,3 +36,5 @@ uvicorn src.api_server:app --reload --port 8000
 # 대시보드 실행
 streamlit run src/dashboard.py
 ```
+
+![Streamlit 대쉬보드 이미지](dashboard.png)
