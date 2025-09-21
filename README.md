@@ -23,7 +23,7 @@ pip install openimages fastapi uvicorn streamlit
 
 # 데이터 다운로드
 oi_download_dataset --csv_dir ./openimages_csv --base_dir ./openimages_data \
-  --labels Person Car "Traffic light" Bus --format pascal --limit 200
+  --labels "Person" "Car" "Traffic light" "Bus" --format pascal --limit 200
 
 # 변환/적재/품질검사
 python src/concat_pascal_to_csv.py

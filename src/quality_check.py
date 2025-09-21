@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 
 engine = create_engine("postgresql://postgres:vcxa123@localhost:5432/labeling_db")
 
+# labeling_data 읽기
 df = pd.read_sql("SELECT * FROM labeling_data", engine)
 
 errors = []
@@ -29,10 +30,24 @@ for cls in imbalanced_classes.index:
             "error_detail": f"class={cls}, count={len(subset)}"
         })
 
-# ✅ DB 저장
+# ✅ DataFrame 변환 후 중복 제거
 if errors:
     err_df = pd.DataFrame(errors)
-    err_df.to_sql("quality_metrics", engine, if_exists="append", index=False)
-    print(f"✅ 검출된 오류 {len(errors)}건 → quality_metrics에 저장 완료")
+
+    # image_id + error_type 기준으로만 중복 제거
+    err_df = err_df.drop_duplicates(subset=["image_id", "error_type"])
+
+    # --- DB 중복 확인 ---
+    existing = pd.read_sql("SELECT image_id, error_type FROM quality_metrics", engine)
+
+    # (image_id, error_type) 조합이 DB에 없을 때만 추가
+    merged = err_df.merge(existing, on=["image_id", "error_type"], how="left", indicator=True)
+    new_errors = merged[merged["_merge"] == "left_only"].drop(columns=["_merge"])
+
+    if not new_errors.empty:
+        new_errors.to_sql("quality_metrics", engine, if_exists="append", index=False)
+        print(f"✅ 새로운 오류 {len(new_errors)}건 추가 → quality_metrics 저장 완료")
+    else:
+        print("✅ 새로운 오류 없음 (DB에 이미 모두 존재)")
 else:
     print("✅ 검출된 오류 없음")
