@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 st.title("📊 Labeling Quality Dashboard")
 
-engine = create_engine("postgresql://user:password@localhost:5432/labeling_db")
+engine = create_engine("postgresql://postgres:vcxa123@localhost:5432/labeling_db")
 df = pd.read_sql("SELECT * FROM labeling_data", engine)
 
 st.subheader("클래스 분포")

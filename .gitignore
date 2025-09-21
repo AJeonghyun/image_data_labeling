@@ -4,3 +4,4 @@ data/raw/
 *.jpg
 *.png
 *.zip
+src/__pycache__/
